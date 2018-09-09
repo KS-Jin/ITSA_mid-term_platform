@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Final-term-upload System</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/stylish-portfolio.min.css" rel="stylesheet">
+
+    <style>
+    #dropDIV{
+        text-align: center; 
+        width: 300px;
+        height: 270px;        
+        margin: auto;
+        border: dashed 2px gray;
+        border-radius:20px;   
+    }
+    #progress_width{
+        width: 280px;
+        margin:0px auto;
+    }
+    img{
+        max-height:180px;
+        max-width:180px;
+        opacity:0.7;
+    }
+    </style>
+    <script>
+        //避免拖拉
+        window.addEventListener("dragover",function(e){
+            e = e || event;
+            e.preventDefault();
+        },false);
+
+        window.addEventListener("drop",function(e){
+            e = e || event;
+            e.preventDefault();
+        },false);
+
+        function dragoverHandler(evt) {
+            evt.preventDefault();
+        }
+        function dropHandler(evt) {//evt 為 DragEvent 物件
+            evt.preventDefault();
+            var files = evt.dataTransfer.files;//由DataTransfer物件的files屬性取得檔案物件
+            var fd = new FormData();
+            var xhr = new XMLHttpRequest();
+            var up_progress = document.getElementById('up_progress');
+            xhr.open('POST', 'upload_zip.php');//上傳到upload.php
+            
+            xhr.upload.onprogress = function(evt) {
+              //上傳進度
+              if (evt.lengthComputable) {
+                var complete =  (evt.loaded / evt.total) * 100 | 0 ;
+
+                up_progress.innerHTML = complete + ' %';
+                up_progress.style.width = complete + '%';
+                up_progress.setAttribute('aria-valuenow', complete) ;
+              } 
+                       
+            }
+            xhr.onload = function(evt) {
+                //上傳完成
+                 var arrData = JSON.parse(xhr.responseText) ;
+                 //alert("發生錯誤: " + xhr.status);
+                 document.getElementById("imgDIV").innerHTML = arrData;
+            }
+
+            
+            for (var i in files) {
+                if (files[i].type == 'application/x-zip-compressed' || files[i].type == 'application/octet-stream' || files[i].type == 'application/x-tar') {
+                    //將圖片在頁面預覽
+                    var fr = new FileReader();
+                    fr.onload = openfile;
+                    fr.readAsDataURL(files[i]);
+                     
+                    //新增上傳檔案，上傳後名稱為 ff 的陣列
+                    fd.append('ff[]', files[i]);
+                }
+            }
+            
+            xhr.send(fd);//開始上傳
+
+            xhr.onreadystatechange = function() {
+                // 伺服器請求完成
+                if (xhr.readyState === 4) {
+                 // 伺服器回應成功
+                    if (xhr.status === 200) {
+                        var type = xhr.getResponseHeader("Content-Type"); 
+                        //document.getElementById('imgDIV').appendChild(type);
+                        //alert("發生錯誤: " + xhr.status);
+                    }
+                } 
+            }       
+        }
+        
+        function openfile(evt) {
+            var img = evt.target.result;
+            var imgx = document.createElement('img');
+            imgx.style.margin = "20px";
+            imgx.src = img;
+            document.getElementById('imgDIV').appendChild(imgx);
+        }   
+        
+
+    </script>
+	
+  </head>
+
+  <body id="page-top">
+    <!-- Navigation -->
+    <a class="menu-toggle rounded" href="#">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li class="sidebar-brand">
+          <a class="js-scroll-trigger" href="#page-top">Mid-term-upload System</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="#page-top">上傳解答</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="#about">查看上傳名單</a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="masthead d-flex">
+      <div class="container text-center my-auto">
+        <h1 class="mb-1">期末考上傳系統</h1>
+        <h3 class="mb-5">
+          拖曳檔案到下方
+        </h3>
+		<div id="dropDIV" ondragover="dragoverHandler(event)" ondrop="dropHandler(event)">
+		<p><p>	
+        <img src="upload.png">
+
+			<br><br>
+			<div id ="progress_width" class="progress text-center">
+				<div id="up_progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" >
+				</div>
+			</div>
+		</div>
+		<div id="imgDIV"></div>
+		<div class="overlay"></div>
+    </header>
+
+    <!-- About -->
+    <section class="content-section bg-light" id="about">
+      <div class="container text-center">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h2>查看上傳名單</h2>
+            <p class="lead mb-5">確認有無上傳確認有無上傳成功</p>
+            <a class="btn btn-dark btn-xl js-scroll-trigger" href="read_file.html">查看上傳名單</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   
+
+   
+
+
+
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+      <i class="fa fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/stylish-portfolio.min.js"></script>
+
+  </body>
+
+</html>
+*/
