@@ -1,5 +1,5 @@
 # 扎根計畫期中考  上傳系統
-網頁版型採用開源的 [Stylish Portfolio](http://startbootstrap.com/template-overviews/stylish-portfolio/) 
+網頁版型採用開源的 [Stylish Portfolio](http://startbootstrap.com/template-overviews/stylish-portfolio/)   
 在斷網的環境下提供給學生上傳檔案用而開發  
 ## 操作介面
 ![image](https://github.com/KS-Jin/ITSA_mid-term_platform/blob/master/pic/upload1.JPG)  
